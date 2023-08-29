@@ -6,10 +6,12 @@ import com.onrender.themba.discovercareers.entity.Category;
 import com.onrender.themba.discovercareers.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,6 +20,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class PageController {
@@ -28,15 +32,24 @@ public class PageController {
         this.uploadsLocation = Paths.get(storageProperty.getUploadsLocation());
     }
     @GetMapping("/")
-    private String index(){
+    private String index(Model model){
+        List<Category> categoryList = categoryRepository.findAll();
+        System.out.println(categoryList);
+        model.addAttribute("categoryList", categoryList);
         return "index";
     }
     @GetMapping("/new-category")
-    private String newCategory(){
+    private String newCategory(Model model){
+        List<Category> categoryList = categoryRepository.findAll();
+        System.out.println(categoryList);
+        model.addAttribute("categoryList", categoryList);
         return "new_category";
     }
     @PostMapping("/add-new-category")
-    private String addCategory(@RequestParam String title, @RequestParam String description, @RequestParam MultipartFile file) throws IOException {
+    private String addCategory(@RequestParam String title,
+                               @RequestParam String description,
+                               @RequestParam MultipartFile file,
+                               RedirectAttributes redirectAttributes) throws IOException {
             System.out.println(title);
             System.out.println(description);
             System.out.println(file.getOriginalFilename());
@@ -54,16 +67,26 @@ public class PageController {
         Path destination = specificImagePath.resolve(Paths.get(file.getOriginalFilename())).normalize().toAbsolutePath();
         try(InputStream inputStream = file.getInputStream()){
             Files.copy(inputStream , destination , StandardCopyOption.REPLACE_EXISTING);
+            redirectAttributes.addAttribute("message", "Category Successfully Added.");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         return "redirect:/";
     }
-
+    @GetMapping("/category")
+    private String category(@RequestParam("category-id") String categoryID, Model model){
+        Optional<Category> optionalCategory = categoryRepository.findById(Long.valueOf(categoryID));
+        if (optionalCategory.isPresent()){
+            System.out.println("==========================================");
+            System.out.println(optionalCategory.get());
+            System.out.println("==========================================");
+            model.addAttribute("category", optionalCategory.get());
+            return "category";
+        }
+        return "redirect:/";
+    }
     @GetMapping("/new-career")
     private String newCareer(){
-
-
         return "new_career";
     }
     @GetMapping("/testing")
