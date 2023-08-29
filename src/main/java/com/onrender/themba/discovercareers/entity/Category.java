@@ -25,4 +25,9 @@ public class Category {
     public String getFileLocation(){
         return "/uploads/"+ id + "/" + imagePath;
     }
+    @Transient
+    public String getSummary(){
+        return description.substring(0, 140) + "...";
+    }
+
 }
