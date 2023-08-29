@@ -56,6 +56,24 @@
 </section>
 
 
+<table class="table">
+    <thead>
+    <tr>
+        <th>Career Title</th>
+        <th>Career Image</th>
+        <th>Career ID</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="employee : ${employees}">
+        <td th:text="${employee.firstName}"></td>
+        <td th:text="${employee.lastName}"></td>
+        <td th:text="${employee.email}"></td>
+    </tr>
+    </tbody>
+</table>
+
+
 
 
 
