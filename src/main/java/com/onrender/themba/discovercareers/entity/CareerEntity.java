@@ -25,7 +25,8 @@ public class CareerEntity {
     private double salary;
 //    @Column(length = Length.LONG16)
 //    private String duty;
-    @ManyToOne
+    
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private CategoryEntity category;
 }
