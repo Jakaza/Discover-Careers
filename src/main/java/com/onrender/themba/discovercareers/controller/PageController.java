@@ -2,7 +2,9 @@ package com.onrender.themba.discovercareers.controller;
 
 
 import com.onrender.themba.discovercareers.config.StorageProperty;
-import com.onrender.themba.discovercareers.entity.Category;
+import com.onrender.themba.discovercareers.entity.CareerEntity;
+import com.onrender.themba.discovercareers.entity.CategoryEntity;
+import com.onrender.themba.discovercareers.repository.CareerRepository;
 import com.onrender.themba.discovercareers.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,13 +19,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.text.Normalizer;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,6 +35,8 @@ public class PageController {
     private final int PAGESIZE = 6;
     @Autowired
     private CategoryRepository categoryRepository;
+    @Autowired
+    private CareerRepository careerRepository;
     private Path uploadsLocation;
     public PageController(StorageProperty storageProperty) {
         this.uploadsLocation = Paths.get(storageProperty.getUploadsLocation());
@@ -42,7 +47,7 @@ public class PageController {
     }
     @GetMapping("/new-category")
     private String newCategory(Model model){
-        List<Category> categoryList = categoryRepository.findAll();
+        List<CategoryEntity> categoryList = categoryRepository.findAll();
         System.out.println(categoryList);
         model.addAttribute("categoryList", categoryList);
         model.addAttribute("totalNo", 10);
@@ -56,12 +61,12 @@ public class PageController {
             System.out.println(title);
             System.out.println(description);
             System.out.println(file.getOriginalFilename());
-        Category category = Category.builder()
+        CategoryEntity category = CategoryEntity.builder()
                 .title(title)
                 .description(description)
                 .imagePath(file.getOriginalFilename())
                 .build();
-        Category savedCategory = categoryRepository.save(category);
+        CategoryEntity savedCategory = categoryRepository.save(category);
         Path specificImagePath = uploadsLocation.resolve("" + savedCategory.getId());
 
         if(!Files.exists(specificImagePath)){
@@ -78,7 +83,7 @@ public class PageController {
     }
     @GetMapping("/category")
     private String category(@RequestParam("category-id") String categoryID, Model model){
-        Optional<Category> optionalCategory = categoryRepository.findById(Long.valueOf(categoryID));
+        Optional<CategoryEntity> optionalCategory = categoryRepository.findById(Long.valueOf(categoryID));
         if (optionalCategory.isPresent()){
             System.out.println("==========================================");
             System.out.println(optionalCategory.get());
@@ -90,10 +95,54 @@ public class PageController {
     }
     @GetMapping("/new-career")
     private String newCareer(Model model){
-
+        List<CategoryEntity> careerCategories = categoryRepository.findAll();
 
         model.addAttribute("totalNo", 10);
+        model.addAttribute("careerCategories", careerCategories);
         return "new_career";
+    }
+
+    @PostMapping("/add-new-career")
+    private String addCareer(@RequestParam String title,
+                             @RequestParam Long category,
+                             @RequestParam String description,
+                             @RequestParam MultipartFile file,
+                             @RequestParam Double salary,
+                             @RequestParam String skills
+                             ){
+        List<String> skillList = textorizeSkills(skills);
+
+        CategoryEntity categoryEntity = CategoryEntity.builder().id(category).build();
+        CareerEntity careerEntity = CareerEntity.builder()
+                .name(title)
+                .category(categoryEntity)
+                .salary(salary)
+                .skills(skillList)
+                .build();
+
+        CareerEntity savedCareer = careerRepository.save(careerEntity);
+
+        System.out.println("=========================================");
+        System.out.println("ID : " + category);
+        System.out.println("title : " + title);
+        System.out.println("salary : " + salary);
+        System.out.println("skills : " + skillList);
+        System.out.println("File : " + file.getOriginalFilename());
+        System.out.println("description : " + description);
+
+        System.out.println("---------------------------------------------");
+        System.out.println(savedCareer);
+        return "redirect:/";
+    }
+
+    private List<String> textorizeSkills(String skill){
+        String[] skills = skill.split(",");
+        List<String> normalisedSkills = new ArrayList<>();
+        for (String text : skills) {
+            String normalized = Normalizer.normalize(text, Normalizer.Form.NFD);
+            normalisedSkills.add(normalized.trim());
+        }
+        return normalisedSkills;
     }
 
 
@@ -105,16 +154,22 @@ public class PageController {
     @GetMapping("/page/{pageNumber}")
     private String findPagination(@PathVariable("pageNumber") int currentPage, Model model){
         Pageable pageable = PageRequest.of(currentPage - 1, PAGESIZE);
-        Page<Category> page = categoryRepository.findAll(pageable);
+        Page<CategoryEntity> page = categoryRepository.findAll(pageable);
 
         int totalPage = page.getTotalPages();
         long totalItems = page.getTotalElements();
-        List<Category> categories = page.getContent();
+        List<CategoryEntity> categories = page.getContent();
 
         model.addAttribute("totalPage", totalPage);
         model.addAttribute("currentPage", currentPage);
         model.addAttribute("totalItems", totalItems);
         model.addAttribute("categories", categories);
+
+        if(categories.size() >= 1){
+            System.out.println(">>>>>>" + categories);
+            System.out.println(">>>>>>" + categories.get(0).getCareers());
+        }
+
         return "index";
     }
 }

@@ -31,11 +31,9 @@
     <div class="row py-lg-2">
         <div class="col-lg-6 col-md-8 mx-auto">
             <form action="/add-new-career" method="post" enctype="multipart/form-data">
-                <select class="form-select" aria-label="Select Category">
-                    <option selected>Open to select career category</option>
-                    <option value="1">One</option>
-                    <option value="1">One</option>
-                    <option value="1">One</option>
+                <select class="form-select" name="category" aria-label="Select Category">
+                    <option selected disabled>Open to select career category</option>
+                    <option th:each="category:${careerCategories}" th:value="${category.id}">[[${category.title}]]</option>
                 </select>
 
                 <div class="mb-3">
