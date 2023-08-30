@@ -25,11 +25,7 @@ public class CategoryEntity {
     private String description;
     private String imagePath;
 
-    @OneToMany(
-            mappedBy = "category",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
+    @OneToMany(mappedBy = "recipe", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<CareerEntity> careers = new ArrayList<>();
 
     @Transient
