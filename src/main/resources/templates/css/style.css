@@ -1,8 +1,8 @@
 /**
- * WEBSITE: https://themefisher.com
- * TWITTER: https://twitter.com/themefisher
- * FACEBOOK: https://www.facebook.com/themefisher
- * GITHUB: https://github.com/themefisher/
+ * WEBSITE: https://themba.onrender.com
+ * TWITTER: https://twitter.com/thembag
+ * FACEBOOK: https://www.facebook.com/malume_jakaza
+ * GITHUB: https://github.com/jakaza/
  */
 
 /*  typography */
@@ -943,3 +943,23 @@ footer .section {
   box-shadow: none;
 }
 /*# sourceMappingURL=style.css.map */
+
+
+.hide-dot  li::before{
+  display: none !important;
+}
+
+
+.hide-dot  a{
+  text-align: 16px !important;
+  font-weight: 100;
+}
+
+
+a.page-link {
+  font-size: x-large;
+}
+
+h2.mt-1.mb-1 {
+  font-size: x-large;
+}
