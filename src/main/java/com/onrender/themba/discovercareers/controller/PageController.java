@@ -6,6 +6,7 @@ import com.onrender.themba.discovercareers.entity.CareerEntity;
 import com.onrender.themba.discovercareers.entity.CategoryEntity;
 import com.onrender.themba.discovercareers.repository.CareerRepository;
 import com.onrender.themba.discovercareers.repository.CategoryRepository;
+import com.onrender.themba.discovercareers.utils.SlugUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -123,11 +124,11 @@ public class PageController {
             CareerEntity careerEntity = new CareerEntity();
             careerEntity.setName(title);
             careerEntity.setSalary(salary);
+            careerEntity.setSlug(SlugUtil.createSlug(title));
             careerEntity.setSkills(skillList);
             careerEntity.setCategory(category1);
             careerEntity.setImagePath(imageName);
             CareerEntity saved = careerRepository.save(careerEntity);
-
             String savedID = String.valueOf(saved.getId());
             Path newPath = subUploadsLocation.resolve(savedID);
             if(!Files.exists(newPath)){
@@ -152,6 +153,14 @@ public class PageController {
             normalisedSkills.add(normalized.trim());
         }
         return normalisedSkills;
+    }
+
+
+    @GetMapping("/career")
+    private String findCareer(@RequestParam("career-id") Long id, Model model){
+        Optional<CareerEntity> career = careerRepository.findById(id);
+
+        return "career";
     }
 
 
@@ -190,8 +199,6 @@ public class PageController {
 
         return "index";
     }
-
-
     @GetMapping("/*")
     private String pageNotFound(){
         return "404";
