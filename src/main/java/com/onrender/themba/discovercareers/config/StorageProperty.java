@@ -4,7 +4,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties("storage")
 public class StorageProperty {
-    private String uploadsLocation = "uploads";
+    private String uploadsLocation = "uploads/categories";
+    private String subUploadsLocation = "uploads/careers";
     private String staticLocation = "src/main/resources/static";
     public String getUploadsLocation() {
         return uploadsLocation;
@@ -18,5 +19,13 @@ public class StorageProperty {
     }
     public void setStaticLocation(String staticLocation) {
         this.staticLocation = staticLocation;
+    }
+
+    public String getSubUploadsLocation() {
+        return subUploadsLocation;
+    }
+
+    public void setSubUploadsLocation(String subUploadsLocation) {
+        this.subUploadsLocation = subUploadsLocation;
     }
 }
