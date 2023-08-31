@@ -26,9 +26,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.text.Normalizer;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Controller
 public class PageController {
@@ -38,8 +36,11 @@ public class PageController {
     @Autowired
     private CareerRepository careerRepository;
     private Path uploadsLocation;
+    private Path subUploadsLocation;
+
     public PageController(StorageProperty storageProperty) {
         this.uploadsLocation = Paths.get(storageProperty.getUploadsLocation());
+        this.subUploadsLocation = Paths.get(storageProperty.getSubUploadsLocation());
     }
     @GetMapping("/")
     private String index(Model model){
@@ -61,11 +62,10 @@ public class PageController {
             System.out.println(title);
             System.out.println(description);
             System.out.println(file.getOriginalFilename());
-        CategoryEntity category = CategoryEntity.builder()
-                .title(title)
-                .description(description)
-                .imagePath(file.getOriginalFilename())
-                .build();
+        CategoryEntity category = new CategoryEntity();
+        category.setTitle(title);
+        category.setDescription(description);
+        category.setImagePath(file.getOriginalFilename());
         CategoryEntity savedCategory = categoryRepository.save(category);
         Path specificImagePath = uploadsLocation.resolve("" + savedCategory.getId());
 
@@ -84,11 +84,16 @@ public class PageController {
     @GetMapping("/category")
     private String category(@RequestParam("category-id") String categoryID, Model model){
         Optional<CategoryEntity> optionalCategory = categoryRepository.findById(Long.valueOf(categoryID));
+
         if (optionalCategory.isPresent()){
-            System.out.println("==========================================");
-            System.out.println(optionalCategory.get());
-            System.out.println("==========================================");
-            model.addAttribute("category", optionalCategory.get());
+            CategoryEntity category = optionalCategory.get();
+            model.addAttribute("category", category);
+            List<CareerEntity> careers = new ArrayList<>();
+            if(!category.getCareers().isEmpty()){
+                careers = category.getCareers();
+            }
+            model.addAttribute("careers", careers);
+
             return "category";
         }
         return "redirect:/";
@@ -109,29 +114,33 @@ public class PageController {
                              @RequestParam MultipartFile file,
                              @RequestParam Double salary,
                              @RequestParam String skills
-                             ){
+                             ) throws IOException {
         List<String> skillList = textorizeSkills(skills);
+        String imageName = file.getOriginalFilename();
+        Optional<CategoryEntity> optionalCategory = categoryRepository.findById(category);
+        if(optionalCategory.isPresent()){
+            CategoryEntity category1 = optionalCategory.get();
+            CareerEntity careerEntity = new CareerEntity();
+            careerEntity.setName(title);
+            careerEntity.setSalary(salary);
+            careerEntity.setSkills(skillList);
+            careerEntity.setCategory(category1);
+            careerEntity.setImagePath(imageName);
+            CareerEntity saved = careerRepository.save(careerEntity);
 
-        CategoryEntity categoryEntity = CategoryEntity.builder().id(category).build();
-        CareerEntity careerEntity = CareerEntity.builder()
-                .name(title)
-                .category(categoryEntity)
-                .salary(salary)
-                .skills(skillList)
-                .build();
+            String savedID = String.valueOf(saved.getId());
+            Path newPath = subUploadsLocation.resolve(savedID);
+            if(!Files.exists(newPath)){
+                Files.createDirectories(newPath);
+            }
+            Path destination = newPath.resolve(Paths.get(Objects.requireNonNull(imageName))).normalize().toAbsolutePath();
 
-        CareerEntity savedCareer = careerRepository.save(careerEntity);
-
-        System.out.println("=========================================");
-        System.out.println("ID : " + category);
-        System.out.println("title : " + title);
-        System.out.println("salary : " + salary);
-        System.out.println("skills : " + skillList);
-        System.out.println("File : " + file.getOriginalFilename());
-        System.out.println("description : " + description);
-
-        System.out.println("---------------------------------------------");
-        System.out.println(savedCareer);
+            try (InputStream inputStream = file.getInputStream()){
+                Files.copy(inputStream, destination, StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
         return "redirect:/";
     }
 
@@ -148,6 +157,20 @@ public class PageController {
 
     @GetMapping("/testing")
     private String testing(){
+
+        List<CategoryEntity> categories = categoryRepository.findAll();
+        System.out.println();
+
+        for (int i = 0; i < categories.size(); i++) {
+            List<CareerEntity> careers = categories.get(i).getCareers();
+            System.out.println(categories.get(i).getFileLocation());
+            System.out.println("---------------------------------------");
+            for (CareerEntity career: careers) {
+                System.out.println("Name : " + career.getName());
+                System.out.println("Salary : " + career.getSalary());
+            }
+        }
+
         return "testing";
     }
 
@@ -165,11 +188,12 @@ public class PageController {
         model.addAttribute("totalItems", totalItems);
         model.addAttribute("categories", categories);
 
-        if(categories.size() >= 1){
-            System.out.println(">>>>>>" + categories);
-            System.out.println(">>>>>>" + categories.get(0).getCareers());
-        }
-
         return "index";
+    }
+
+
+    @GetMapping("/*")
+    private String pageNotFound(){
+        return "404";
     }
 }
