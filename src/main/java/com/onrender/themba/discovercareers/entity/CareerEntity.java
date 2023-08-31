@@ -14,7 +14,7 @@ public class CareerEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
-//    private String slug;
+    private String slug;
 //    private String description;
     private List<String> skills;
     private double salary;
@@ -54,6 +54,14 @@ public class CareerEntity {
 
     public String getName() {
         return name;
+    }
+
+    public String getSlug() {
+        return slug;
+    }
+
+    public void setSlug(String slug) {
+        this.slug = slug;
     }
 
     public void setName(String name) {
