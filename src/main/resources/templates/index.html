@@ -31,7 +31,7 @@
     <header class="navigation">
         <div class="container">
           <nav class="navbar navbar-expand-lg navbar-light px-0">
-            <a class="navbar-brand order-1 py-0" href="index.html">
+            <a class="navbar-brand order-1 py-0" href="/">
               <img loading="prelaod" decoding="async" class="img-fluid" src="images/logo.png" alt="Reporter Hugo">
             </a>
             <div class="navbar-actions order-3 ml-0 ml-md-4">
@@ -114,7 +114,7 @@
 
               <div class="col-md-6 mb-4" th:each="category : ${categories}">
                 <article class="card article-card article-card-sm h-100">
-                  <a href="category.html">
+                  <a th:href="@{/category(category-id=${category.id})}">
                     <div class="card-image">
                       <div class="post-info"> <span class="text-uppercase">03 Jun 2021</span>
                         <span class="text-uppercase">2 minutes read</span>
@@ -127,7 +127,7 @@
                       <li> <a href="#!">travel</a>
                       </li>
                     </ul>
-                    <h2><a class="post-title" th:text="${category.title}" href="category.html" /></h2>
+                    <h2><a class="post-title" th:text="${category.title}" th:href="@{/category(category-id=${category.id})}" /></h2>
                     <p class="card-text" th:text="${category.getSummary}" />
 
                     <div class="content"> <a class="read-more-btn" th:href="@{/category(category-id=${category.id})}" >Read Full Article</a>

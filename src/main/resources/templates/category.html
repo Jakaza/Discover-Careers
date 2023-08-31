@@ -94,45 +94,42 @@
 
 
 							<div class="row" >
-								<div class="col-md-4 mb-4" >
+
+
+								<div class="col-md-4 mb-4" th:each="career:${careers}" >
 									<article class="card article-card p-2 article-card-sm h-100">
 									  <a href="category.html">
 										<div class="card-image">
-										  <img loading="lazy" src="/transportation-distribution-and-logistics--new.jpg"   alt="Post Thumbnail" class="w-100">
+										  <img loading="lazy" th:src="${career.getFileLocation}"   alt="Post Thumbnail" class="w-100">
 										</div>
 									  </a>
 									  <div class="card-body px-0 p-1 pb-0">
 				
-										<h2 class="mt-1 mb-1"><a class="post-title" href="category.html" th:href="@{/category(category-id=${category.id})}"> Account Manager </h2>
+										<h2 class="mt-1 mb-1">
+
+                                            <a class="post-title" href="category.html" th:href="@{/category(category-id=${category.id})}">
+                                                [[${career.name}]]
+                                            </a>
+                                        </h2>
 									  </div>
 									</article>
 								  </div>
-								<div class="col-md-4 mb-4" >
-									<article class="card article-card p-2 article-card-sm h-100">
-									  <a href="category.html">
-										<div class="card-image">
-										  <img loading="lazy" src="/science-technology-engineering-and-mathematics--new.jpg"   alt="Post Thumbnail" class="w-100">
-										</div>
-									  </a>
-									  <div class="card-body px-0 p-1 pb-0">
-				
-										<h2 class="mt-1 mb-1"><a class="post-title" href="category.html" th:href="@{/category(category-id=${category.id})}"> Account Manager </h2>
-									  </div>
-									</article>
-								  </div>
-								<div class="col-md-4 mb-4" >
-									<article class="card article-card p-2 article-card-sm h-100">
-									  <a href="category.html">
-										<div class="card-image">
-										  <img loading="lazy" src="/transportation-distribution-and-logistics--new.jpg"   alt="Post Thumbnail" class="w-100">
-										</div>
-									  </a>
-									  <div class="card-body px-0 p-1 pb-0">
-				
-										<h2 class="mt-1 mb-1"><a class="post-title" href="category.html" th:href="@{/category(category-id=${category.id})}"> Account Manager </h2>
-									  </div>
-									</article>
-								  </div>
+
+
+<!--								<div class="col-md-4 mb-4" >-->
+<!--									<article class="card article-card p-2 article-card-sm h-100">-->
+<!--									  <a href="category.html">-->
+<!--										<div class="card-image">-->
+<!--										  <img loading="lazy" src="/science-technology-engineering-and-mathematics&#45;&#45;new.jpg"   alt="Post Thumbnail" class="w-100">-->
+<!--										</div>-->
+<!--									  </a>-->
+<!--									  <div class="card-body px-0 p-1 pb-0">-->
+<!--				-->
+<!--										<h2 class="mt-1 mb-1"><a class="post-title" href="category.html" th:href="@{/category(category-id=${category.id})}"> Account Manager </h2>-->
+<!--									  </div>-->
+<!--									</article>-->
+<!--								  </div>-->
+<!--                                -->
 
 
 
@@ -145,9 +142,9 @@
 										<nav class="mt-4">
 										  <!-- pagination -->
 										  <nav class="mb-md-50">
-											<ul th:if="${totalPage} > 1 " class="pagination hide-dot justify-content-center">
+											<ul  class="pagination hide-dot justify-content-center">
 											  <li class="page-item">
-												<a class="page-link" th:if="${currentPage > 1}" href="#!" aria-label="Pagination Arrow" th:href="@{'/page/'+ ${currentPage - 1} }">
+												<a class="page-link"  href="#!" aria-label="Pagination Arrow" >
 												  <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" viewBox="0 0 16 16">
 													<path fill-rule="evenodd" d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5z"/>
 												  </svg>
@@ -159,7 +156,7 @@
 												 </li>
 					
 											  <li class="page-item">
-												<a class="page-link" th:if="${currentPage < totalPage}" href="#!" aria-label="Pagination Arrow" th:href="@{'/page/'+ ${currentPage + 1} }">
+												<a class="page-link"href="#!" aria-label="Pagination Arrow" >
 												  <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" viewBox="0 0 16 16">
 													<path fill-rule="evenodd" d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z" />
 												  </svg>
