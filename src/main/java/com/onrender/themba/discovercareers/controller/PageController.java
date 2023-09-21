@@ -43,6 +43,18 @@ public class PageController {
         this.uploadsLocation = Paths.get(storageProperty.getUploadsLocation());
         this.subUploadsLocation = Paths.get(storageProperty.getSubUploadsLocation());
     }
+
+
+    @GetMapping("/admin")
+    private String adminIndex(Model model){
+        return "Admin/ad-index";
+    }
+
+    @GetMapping("/admin/blog")
+    public String adminBlog(){
+        return "Admin/ad-ui-forms";
+    }
+
     @GetMapping("/")
     private String index(Model model){
         return findPagination(1, model);

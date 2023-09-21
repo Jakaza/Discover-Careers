@@ -7,6 +7,7 @@ public class StorageProperty {
     private String uploadsLocation = "uploads/categories";
     private String subUploadsLocation = "uploads/careers";
     private String staticLocation = "src/main/resources/static";
+    private String adminStaticLocation = "src/main/resources/static/assets";
     public String getUploadsLocation() {
         return uploadsLocation;
     }
@@ -27,5 +28,13 @@ public class StorageProperty {
 
     public void setSubUploadsLocation(String subUploadsLocation) {
         this.subUploadsLocation = subUploadsLocation;
+    }
+
+    public String getAdminStaticLocation() {
+        return adminStaticLocation;
+    }
+
+    public void setAdminStaticLocation(String adminStaticLocation) {
+        this.adminStaticLocation = adminStaticLocation;
     }
 }

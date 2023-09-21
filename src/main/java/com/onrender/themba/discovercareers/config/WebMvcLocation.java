@@ -9,13 +9,15 @@ import java.nio.file.Paths;
 @Configuration
 public class WebMvcLocation implements WebMvcConfigurer {
     private final Path uploadsLocation;
-
     private final Path subUploadsLocation;
     private final Path staticLocation;
+    private final Path adminStaticLocation;
+
     public WebMvcLocation(StorageProperty storageProperty) {
         this.uploadsLocation = Paths.get(storageProperty.getUploadsLocation());
         this.staticLocation = Paths.get(storageProperty.getStaticLocation());
         this.subUploadsLocation = Paths.get(storageProperty.getSubUploadsLocation());
+        this.adminStaticLocation = Paths.get(storageProperty.getAdminStaticLocation());
     }
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -27,5 +29,8 @@ public class WebMvcLocation implements WebMvcConfigurer {
         String staticLocationAbsolutePath = this.staticLocation.toFile().getAbsolutePath();
         System.out.println(staticLocationAbsolutePath);
         registry.addResourceHandler("//**").addResourceLocations("classpath:/" +staticLocationAbsolutePath );
+        String adminStaticLocationPath = adminStaticLocation.toFile().getAbsolutePath();
+        System.out.println(adminStaticLocationPath);
+        registry.addResourceHandler("//**").addResourceLocations("classpath:/" + adminStaticLocationPath);
     }
 }
